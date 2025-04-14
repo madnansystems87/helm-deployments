@@ -1,0 +1,69 @@
+# Default values for springboot-app.
+
+replicaCount: 2
+
+image:
+  repository: 195361087056.dkr.ecr.us-east-1.amazonaws.com/java-web-app
+  pullPolicy: Always
+  tag: latest
+
+
+imagePullSecrets:
+  - name: aws-ecr-secret
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: "nginx" 
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: springboot-app.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: springboot-app-tls
+      hosts:
+        - springboot-app.example.com
+
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 75
+
+volumes: []
+volumeMounts: []
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
